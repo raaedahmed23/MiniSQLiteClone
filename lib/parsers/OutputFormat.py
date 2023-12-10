@@ -9,7 +9,7 @@ class OutputFormat:
         print(Settings.line("*", 70))
         print(f"----------Welcome to {Settings.get_db_name()} CLI----------")
         # print(Settings.line("-", 80))
-        print("\nUse command 'init db;' to initialize the database")
+        print("\nUse command 'create db;' to initialize the database")
         print("\nFor supported commands use: \"help;\".")
         # print(Settings.line("-", 80))
         print(Settings.line("*", 70))
