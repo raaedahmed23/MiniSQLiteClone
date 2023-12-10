@@ -13,7 +13,7 @@ from lib.objects.DataType import DataType
 @total_ordering
 class Record:
 
-    CONDITONAL_OPER = {
+    COND_OPER = {
     "=": eq,
     ">=": ge,
     "<=": le,
@@ -22,13 +22,13 @@ class Record:
     "<": lt
     }
 
-    CONDITIONAL_OPER_NOT = {
+    COND_OPER_NOT = {
     "=": "<>",
     ">=": "<",
     "<=": ">"
     }
 
-    COND_NOT_LIST = {v: k for k, v in CONDITIONAL_OPER_NOT.items()} | CONDITIONAL_OPER_NOT
+    COND_NOT_LIST = {v: k for k, v in COND_OPER_NOT.items()} | COND_OPER_NOT
 
     row_id: np.uint32
     num_columns: np.uint8
@@ -46,43 +46,43 @@ class Record:
             acc_list.append(typ.typed_value_to_bytes(v))
             type_id_list.append(typ.get_id_bytes(v))
 
-        val_bytes = b"".join(acc_list)
+        dval_bytes = b"".join(acc_list)
         data_type_bytes = b"".join(type_id_list)
 
-        return self.int_object_to_bytes(self.num_columns, 1) + data_type_bytes + val_bytes
+        return self.int_object_to_bytes(self.num_columns, 1) + data_type_bytes + dval_bytes
 
     def object_to_bytes(self):
-        pay_load = self.cell_byte_stream()
-        payload_size = len(pay_load)
+        payload = self.cell_byte_stream()
+        payload_size = len(payload)
         row_id_byte_stream = self.int_object_to_bytes(self.row_id, 4)
         return b''.join([
             self.int_object_to_bytes(payload_size, 2),
             row_id_byte_stream,
-            pay_load
+            payload
         ])
 
     def matches_condition(self, condition: Dict) -> bool:
 
-        left_val = self.data_values[condition["column_order"]]
-        right_val = condition["value"]
+        lval = self.data_values[condition["column_order"]]
+        rval = condition["value"]
         comp = condition["comparator"]
         if condition["negated"] == "TRUE":
             comp = self.COND_NOT_LIST[comp]
 
-        return self.COND_OPER[comp](left_val, right_val)
+        return self.COND_OPER[comp](lval, rval)
 
     def update_val(self, operation: Dict):
 
-        right_val = operation["value"]
+        rval = operation["value"]
         type_ = self.data_types[operation["column_order"]]
         type_cast = type_.value[3]
         col_name = operation["column_name"]
 
-        if isinstance(right_val, type_cast):
-            self.data_values[operation["column_order"]] = type_cast(right_val)
+        if isinstance(rval, type_cast):
+            self.data_values[operation["column_order"]] = type_cast(rval)
             return self
         else:
-            raise TypeError(f"{right_val} isn't a valid value for {col_name} of type {type_.value[0]}")
+            raise TypeError(f"{rval} isn't a valid value for {col_name} of type {type_.value[0]}")
 
 
     def __lt__(self, other: Union[Record, int]):
@@ -172,7 +172,7 @@ class Record:
         return lambda x: cls.update_val(x, operation)
 
     @classmethod
-    def int_obj_to_bytes(cls,int_like_val: Any, size: int):
+    def int_object_to_bytes(cls,int_like_val: Any, size: int):
         try:
             int_like_val.tobytes(">")
         except Exception:
