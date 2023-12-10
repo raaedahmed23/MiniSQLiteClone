@@ -1,6 +1,6 @@
 
 class SystemTable:
-    def parse_column_data(table_names):
+    def parse_column_data(table_name):
         parsed_tokens = {
             "command": "SELECT",
             "column_name_list": [
@@ -15,13 +15,13 @@ class SystemTable:
             "negated": "FALSE",
             "column_name": "table_name",
             "comparator": "=",
-            "value": table_names
+            "value": table_name
             }
         }
         return parsed_tokens
 
-    def parse_table_data(table_names):
-        token = {
+    def parse_table_data(table_name):
+        parsed_tokens = {
             "command": "SELECT",
             "column_name_list": [
                 "page_size",
@@ -32,14 +32,14 @@ class SystemTable:
             "negated": "FALSE",
             "column_name": "table_name",
             "comparator": "=",
-            "value": table_names
+            "value": table_name
             }
         }
-        return token
+        return parsed_tokens
 
-    def insert_column_data(row_id: int, table_names: str, column_name: str, 
+    def insert_column_data(row_id: int, table_name: str, column_name: str, 
                                 data_type: str, column_position: int, is_nullable: str, column_key: str):
-        insert_tokens = {
+        insert_parsed_tokens = {
             "command": "INSERT INTO TABLE",
             "column_name_list": [
                 "rowid",
@@ -53,7 +53,7 @@ class SystemTable:
             "table_name": "system_columns",
             "value_list": [
                 row_id,
-                table_names, 
+                table_name, 
                 column_name,
                 data_type, 
                 column_position, 
@@ -61,9 +61,9 @@ class SystemTable:
                 column_key
             ]
         }
-        return insert_tokens
+        return insert_parsed_tokens
 
-    def insert_table_data(row_id, table_names, page_size, id_row):
+    def insert_table_data(row_id, table_name, page_size, id_row):
         insert_parsed_tokens = {
             "command": "INSERT INTO TABLE",
             "column_name_list": [
@@ -75,16 +75,16 @@ class SystemTable:
             "table_name": "system_tables",
             "value_list": [
                 row_id,
-                table_names,
+                table_name,
                 page_size,
                 id_row
             ]
         }
         return insert_parsed_tokens
 
-    def update_table_data(table_names, id_row):
+    def update_table_data(table_name, id_row):
         
-        dict = {
+        utdict = {
             "command": "UPDATE",
             "table_name": "system_tables",
             "operation": {
@@ -97,28 +97,28 @@ class SystemTable:
                 "negated": "FALSE",
                 "column_name": "table_name",
                 "comparator": "=",
-                "value": table_names
+                "value": table_name
             }
         }
             
-        return dict
+        return utdict
 
     
 
-    def delete_column_data(table_names):
-        delete =  {
+    def delete_column_data(table_name):
+        delete_dict =  {
             "command": "DELETE",
             "table_name": "system_columns",
             "condition": {
                 "negated": "FALSE",
                 "column_name": "table_name",
                 "comparator": "=",
-                "value": table_names
+                "value": table_name
             }
         }
-        return delete
+        return delete_dict
 
-    def delete_table_data(table_names):
+    def delete_table_data(table_name):
         delete_dict =  {
             "command": "DELETE",
             "table_name": "system_tables",
@@ -126,7 +126,7 @@ class SystemTable:
                 "negated": "FALSE",
                 "column_name": "table_name",
                 "comparator": "=",
-                "value": table_names
+                "value": table_name
             }
         }
         return delete_dict
